@@ -14,7 +14,7 @@ module.exports = class SimpleProgressPlugin {
 
         const spinner = ora(`Running ${buildName} build`)
 
-        compiler.hooks.beforeRun.tap(this.name, () => {
+        compiler.hooks.thisCompilation.tap(this.name, () => {
             spinner.start();
         });
 
