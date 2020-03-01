@@ -6,7 +6,7 @@ module.exports = class SimpleProgressPlugin {
         this.name = 'SimpleProgressPlugin';
     }
     apply(compiler) {
-        const {buildName} = this.options;
+        const {buildName, onlyWatch = true} = this.options;
 
         if (!buildName) {
             return;
@@ -14,12 +14,18 @@ module.exports = class SimpleProgressPlugin {
 
         const spinner = ora(`Running ${buildName} build`)
 
-        compiler.hooks.thisCompilation.tap(this.name, () => {
-            spinner.start();
-        });
+        if (!onlyWatch) {
+            compiler.hooks.thisCompilation.tap(this.name, () => {
+                spinner.start();
+            });
+        }
 
         compiler.hooks.done.tap(this.name, () => {
             spinner.succeed();
+        });
+
+        compiler.hooks.invalid.tap(this.name, () => {
+            spinner.start();
         });
 
         compiler.hooks.failed.tap(this.name, () => {
@@ -27,4 +33,5 @@ module.exports = class SimpleProgressPlugin {
         });
     }
 };
+
 
