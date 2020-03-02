@@ -6,15 +6,23 @@ module.exports = class SimpleProgressPlugin {
         this.name = 'SimpleProgressPlugin';
     }
     apply(compiler) {
-        const {buildName, onlyWatch = true} = this.options;
+        const {buildName, onlyWatch = false} = this.options;
 
         if (!buildName) {
             return;
         }
 
-        const spinner = ora(`Running ${buildName} build`)
+        const spinner = ora({
+            text: `Running ${buildName} build`,
+            discardStdin: false,
+            stream: process.stdout,
+        });
 
-        if (!onlyWatch) {
+        if (onlyWatch) {
+            compiler.hooks.invalid.tap(this.name, () => {
+                spinner.start();
+            });
+        } else {
             compiler.hooks.thisCompilation.tap(this.name, () => {
                 spinner.start();
             });
@@ -24,14 +32,9 @@ module.exports = class SimpleProgressPlugin {
             spinner.succeed();
         });
 
-        compiler.hooks.invalid.tap(this.name, () => {
-            spinner.start();
-        });
-
         compiler.hooks.failed.tap(this.name, () => {
-            spinner.stop();
+            spinner.fail();
         });
     }
 };
-
 

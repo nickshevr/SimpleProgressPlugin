@@ -1,6 +1,6 @@
 {
   "name": "simpleprogressplugin",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "webpack lightweight progress plugin",
   "main": "index.js",
   "scripts": {
